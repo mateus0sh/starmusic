@@ -11,7 +11,8 @@ opcoes:
   -h, --help                       Mostra esta mensagem de ajuda
   -s, --search                     Pesquisar video, Ex: starmusic.exe Love Hurts (1976) -s
   -c, --convert                    Desativar a conversao (nativa) de todos os arquivos .webm em .mp3
-  -o, --organizar                  Organizar pelo nome do canal
+  -a, --autor                      Organizar pelo autor da musica
+  -p, --palavra                    Organizar por alguma palavra, Ex: starmusic.exe RDP -p
 ```
 
 ---
