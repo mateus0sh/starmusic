@@ -4,8 +4,6 @@
 #include <algorithm>  // std::remove
 #pragma comment(lib, "urlmon.lib")
 
-bool convert = true;
-
 bool downloadFile(const std::wstring& url, const std::wstring& pasta) {
     HRESULT hr = URLDownloadToFileW(NULL, url.c_str(), pasta.c_str(), 0, NULL);
     return SUCCEEDED(hr);
@@ -58,7 +56,7 @@ void convertWebmToMp3(const fs::path& webmFile) {
     }
 }
 
-int convertAll()
+int convertAll(bool convert)
 {
     if (convert)
     {
@@ -148,4 +146,38 @@ int organizarPorAutor(std::string baseDir) {
         }
     }
     std::cout << "Arquivos movidos: " << count << "\n";
+}
+
+int organizarPorPalavra(const std::string& baseDir, const std::string& palavra) {
+
+    fs::path pasta = fs::absolute(baseDir);
+    if (!fs::exists(pasta)) {
+        std::cerr << "Diretório não existe!\n";
+        return 1;
+    }
+
+    fs::path destino = pasta / palavra;
+    if (!fs::exists(destino)) fs::create_directory(destino);
+
+    int count = 0;
+
+    for (const auto& entry : fs::directory_iterator(pasta)) {
+        if (!entry.is_regular_file()) continue;
+        if (entry.path().extension() != ".mp3") continue;
+
+        std::string nome = entry.path().filename().string();
+        if (nome.find(palavra) == std::string::npos) continue;
+
+        std::error_code ec;
+        fs::rename(entry.path(), destino / entry.path().filename(), ec);
+
+        if (ec) std::cerr << "[ERRO] Falha ao mover: " << ec.message() << "\n";
+        else {
+            std::cout << "[MOVENDO] " << nome << " -> " << destino << "\n";
+            count++;
+        }
+    }
+
+    std::cout << "Arquivos movidos: " << count << "\n";
+    return 0;
 }
